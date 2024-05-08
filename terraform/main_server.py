@@ -7,7 +7,7 @@ from cdktf_cdktf_provider_aws.default_subnet import DefaultSubnet
 from cdktf_cdktf_provider_aws.launch_template import LaunchTemplate
 from cdktf_cdktf_provider_aws.lb import Lb
 from cdktf_cdktf_provider_aws.lb_target_group import LbTargetGroup
-from cdktf_cdktf_provider_aws.lb_listener import LbListener
+from cdktf_cdktf_provider_aws.lb_listener import LbListener, LbListenerDefaultAction
 from cdktf_cdktf_provider_aws.autoscaling_group import AutoscalingGroup
 from cdktf_cdktf_provider_aws.security_group import SecurityGroup, SecurityGroupIngress, SecurityGroupEgress
 from cdktf_cdktf_provider_aws.data_aws_caller_identity import DataAwsCallerIdentity
@@ -21,13 +21,17 @@ your_repo=""
 
 user_data= base64.b64encode(f"""
 #!/bin/bash
-echo "userdata-start"
-echo 'export BUCKET={bucket}' >> /etc/environment
-echo 'export DYNAMO_TABLE={dynamo_table}' >> /etc/environment           
+echo "userdata-start"        
 apt update
-apt install -y python3-pip
-git clone {your_repo}
-cd Ensai-CloudComputingLab1
+apt install -y python3-pip python3.12-venv
+git clone {your_repo} projet
+cd projet/webservice
+rm .env
+echo 'BUCKET={bucket}' >> .env
+echo 'DYNAMO_TABLE={dynamo_table}' >> .env
+python3 -m venv venv
+source venv/bin/activate
+chmod -R a+rwx venv
 pip3 install -r requirements.txt
 python3 app.py
 echo "userdata-end""".encode("ascii")).decode("ascii")

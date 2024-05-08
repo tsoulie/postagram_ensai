@@ -1,4 +1,5 @@
 import boto3
+from botocore.config import Config
 import os
 from dotenv import load_dotenv
 from typing import Union
@@ -38,8 +39,16 @@ class Post(BaseModel):
     body: str
 
 
-dynamodb = boto3.resource('dynamodb')
+my_config = Config(
+    region_name='us-east-2',
+    signature_version='v4',
+)
+
+dynamodb = boto3.resource('dynamodb', config=my_config)
 table = dynamodb.Table(os.getenv("DYNAMO_TABLE"))
+s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
+bucket = os.getenv("BUCKET")
+
 
 @app.post("/posts")
 async def post_a_post(post: Post, authorization: str | None = Header(default=None)):

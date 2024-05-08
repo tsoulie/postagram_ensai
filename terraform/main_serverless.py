@@ -11,6 +11,7 @@ from cdktf_cdktf_provider_aws.s3_bucket import S3Bucket
 from cdktf_cdktf_provider_aws.s3_bucket_cors_configuration import S3BucketCorsConfiguration, S3BucketCorsConfigurationCorsRule
 from cdktf_cdktf_provider_aws.s3_bucket_notification import S3BucketNotification, S3BucketNotificationLambdaFunction
 from cdktf_cdktf_provider_aws.dynamodb_table import DynamodbTable, DynamodbTableAttribute
+
 class ServerlessStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
@@ -29,20 +30,35 @@ class ServerlessStack(TerraformStack):
                 allowed_origins = ["*"]
             )]
             )
+
         dynamo_table = DynamodbTable()
 
-        # Packagage du code
         code = TerraformAsset()
 
         lambda_function = LambdaFunction()
 
-        permission = LambdaPermission()
+        permission = LambdaPermission(
+            self, "lambda_permission",
+            action="lambda:InvokeFunction",
+            statement_id="AllowExecutionFromS3Bucket",
+            function_name=lambda_function.arn,
+            principal="s3.amazonaws.com",
+            source_arn=bucket.arn,
+            source_account=account_id,
+            depends_on=[lambda_function, bucket]
+        )
 
-        notification = S3BucketNotification()
+        notification = S3BucketNotification(
+            self, "notification",
+            lambda_function=[S3BucketNotificationLambdaFunction(
+                lambda_function_arn=lambda_function.arn,
+                events=["s3:ObjectCreated:*"]
+            )],
+            bucket=bucket.id,
+            depends_on=[permission]
+        )
 
-        TerraformOutput()
 
-        TerraformOutput()
 
 app = App()
 ServerlessStack(app, "cdktf_serverless")
