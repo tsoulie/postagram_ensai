@@ -16,7 +16,7 @@ class ServerlessStack(TerraformStack):
         super().__init__(scope, id)
         AwsProvider(self, "AWS", region="us-east-1")
 
-        account_id = DataAwsCallerIdentity(self, "acount_id").account_id
+        account_id = DataAwsCallerIdentity(self, "account_id").account_id
         
         bucket = S3Bucket(self, "s3_bucket",
             bucket_prefix = "my-cdtf-test-bucket",

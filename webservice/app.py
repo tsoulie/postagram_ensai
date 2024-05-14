@@ -57,15 +57,33 @@ async def post_a_post(post: Post, authorization: str | None = Header(default=Non
     logger.info(f"body : {post.body}")
     logger.info(f"user : {authorization}")
 
-    # Doit retourner le résultat de la requête la table dynamodb
-    return []
+    item = {
+                "username": post.username,
+                "lastename": post.lastename,
+                "title": post.title,
+                "body": post.body
+            }
+    table.put_item(Item=item)
+
+    return {"message": "Post created successfully"}
 
 @app.get("/posts")
 async def get_all_posts(user: Union[str, None] = None):
 
-    # Doit retourner une liste de post
-    return []
+    if user is None:
+        # Récupérer tous les posts si aucun utilisateur n'est spécifié
+        response = table.scan()
+    else:
+        # Récupérer les posts pour un utilisateur spécifique
+        response = table.query(
+            KeyConditionExpression=Key('username').eq(user)
+        )
 
+    # Extraire les items de la réponse DynamoDB
+    items = response.get('Items', [])
+
+    # Retourner la liste des posts
+    return items
     
 @app.delete("/posts/{post_id}")
 async def get_post_user_id(post_id: str):
