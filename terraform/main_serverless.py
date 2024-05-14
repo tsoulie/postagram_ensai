@@ -16,7 +16,7 @@ class ServerlessStack(TerraformStack):
         super().__init__(scope, id)
         AwsProvider(self, "AWS", region="us-east-1")
 
-        account_id = DataAwsCallerIdentity(self, "acount_id").account_id
+        account_id = DataAwsCallerIdentity(self, "account_id").account_id
         
         bucket = S3Bucket(self, "s3_bucket",
             bucket_prefix = "my-cdtf-test-bucket",
@@ -44,31 +44,28 @@ class ServerlessStack(TerraformStack):
             read_capacity=5,
             write_capacity=5)
 
-        # Packagage du code
-        code = TerraformAsset()
 
-        lambda_function = LambdaFunction()
-
+"""
         permission = LambdaPermission(
             self, "lambda_permission",
             action="lambda:InvokeFunction",
             statement_id="AllowExecutionFromS3Bucket",
-            function_name=lambda_function.arn,
+            #function_name=lambda_function.arn,
             principal="s3.amazonaws.com",
             source_arn=bucket.arn,
             source_account=account_id,
-            depends_on=[lambda_function, bucket]
-        )
-
+            #depends_on=[lambda_function, bucket]
+        )"""
+"""
         notification = S3BucketNotification(
             self, "notification",
-            lambda_function=[S3BucketNotificationLambdaFunction(
-                lambda_function_arn=lambda_function.arn,
-                events=["s3:ObjectCreated:*"]
-            )],
+            #lambda_function=[S3BucketNotificationLambdaFunction(
+            #    lambda_function_arn=lambda_function.arn,
+            #    events=["s3:ObjectCreated:*"]
+            #)],
             bucket=bucket.id,
             depends_on=[permission]
-        )
+        )"""
 
 
 

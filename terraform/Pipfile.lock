@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c50ed8ebe524d9bfce34205048ec0dbcbd507903dfb845ca5de9206b6e41ba32"
+            "sha256": "834d62cd88286ef3fd1796af1cc202bd420e60b9cac8a47aef97dd024be3e035"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -41,11 +41,21 @@
             "markers": "python_version ~= '3.8'",
             "version": "==0.20.7"
         },
+        "cdktf-cdktf-provider-aws": {
+            "hashes": [
+                "sha256:140eb199fe8b43426ca6a3c1ed1d73084311aa608cccc7a3dc028588cb6164d6",
+                "sha256:f9bbb73d69190e71d55a9a3b06ad682452c042c2bde04a171b5e0d2bbab58812"
+            ],
+            "index": "pypi",
+            "markers": "python_version ~= '3.8'",
+            "version": "==19.18.0"
+        },
         "constructs": {
             "hashes": [
                 "sha256:2972f514837565ff5b09171cfba50c0159dfa75ee86a42921ea8c86f2941b3d2",
                 "sha256:518551135ec236f9cc6b86500f4fbbe83b803ccdc6c2cb7684e0b7c4d234e7b1"
             ],
+            "index": "pypi",
             "markers": "python_version ~= '3.7'",
             "version": "==10.3.0"
         },
@@ -75,11 +85,11 @@
         },
         "jsii": {
             "hashes": [
-                "sha256:5dd347cc9d279072c109829aaff11dae1c7f13169ce60887f1c1ab2c4cd4abcd",
-                "sha256:e6db98e34730cd972d180b7f4e21182b9a5105f537672716940b930ee933a1f2"
+                "sha256:3067d523126ce8178374dd958c60350efc831fc2ef3eb94a0a755d64fa4cc22d",
+                "sha256:64bbaf9c494626bc0afd1b95834f0dba66a2f2ecbb0da97fa3000c4b01d67857"
             ],
             "markers": "python_version ~= '3.8'",
-            "version": "==1.97.0"
+            "version": "==1.98.0"
         },
         "packaging": {
             "hashes": [
