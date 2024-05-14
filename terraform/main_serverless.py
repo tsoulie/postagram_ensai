@@ -11,7 +11,6 @@ from cdktf_cdktf_provider_aws.s3_bucket import S3Bucket
 from cdktf_cdktf_provider_aws.s3_bucket_cors_configuration import S3BucketCorsConfiguration, S3BucketCorsConfigurationCorsRule
 from cdktf_cdktf_provider_aws.s3_bucket_notification import S3BucketNotification, S3BucketNotificationLambdaFunction
 from cdktf_cdktf_provider_aws.dynamodb_table import DynamodbTable, DynamodbTableAttribute
-
 class ServerlessStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
@@ -19,7 +18,10 @@ class ServerlessStack(TerraformStack):
 
         account_id = DataAwsCallerIdentity(self, "acount_id").account_id
         
-        bucket = S3Bucket()
+        bucket = S3Bucket(self, "s3_bucket",
+            bucket_prefix = "my-cdtf-test-bucket",
+            acl="private",
+            force_destroy=True)
 
         S3BucketCorsConfiguration(
             self, "cors",
@@ -30,9 +32,19 @@ class ServerlessStack(TerraformStack):
                 allowed_origins = ["*"]
             )]
             )
+        dynamo_table = DynamodbTable(self, "DynamodDB-table",
+            name= "user_score",
+            hash_key="username",
+            range_key="lastename",
+            attribute=[
+            DynamodbTableAttribute(name="username",type="S" ),
+            DynamodbTableAttribute(name="lastename",type="S" )
+            ],
+            billing_mode="PROVISIONED",
+            read_capacity=5,
+            write_capacity=5)
 
-        dynamo_table = DynamodbTable()
-
+        # Packagage du code
         code = TerraformAsset()
 
         lambda_function = LambdaFunction()
