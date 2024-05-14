@@ -1,8 +1,8 @@
 {
   "language": "python",
-  "app": "pipenv run python main.py",
-  "projectId": "52c4b462-6d50-4b38-90a7-a10933a64303",
-  "sendCrashReports": "false",
+  "app": "pipenv run python main_serverless.py",
+  "projectId": "b2f6e06b-ab66-418c-827a-0cf8e811878a",
+  "sendCrashReports": "true",
   "terraformProviders": [
     "hashicorp/aws@~>4.0"
   ],
