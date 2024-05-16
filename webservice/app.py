@@ -43,6 +43,7 @@ class Post(BaseModel):
 
 my_config = Config(
     region_name='us-east-1',
+    region_name='us-east-1',
     signature_version='v4',
 )
 
@@ -75,27 +76,33 @@ async def post_a_post(post: Post, authorization: Union[str, None] = Header(defau
 async def get_all_posts(user: Union[str, None] = None):
 
     if user is None:
-
         response = table.scan()
     else:
-
         response = table.query(
-            KeyConditionExpression=Key('username').eq(user)
+            IndexName='username-lastename-index',  
+            KeyConditionExpression='username = :u',
+            ExpressionAttributeValues={
+                ':u': {'S': user}
+            }
         )
 
     items = response.get('Items', [])
 
+    # Retourner la liste des posts
     return items
 
 
 @app.delete("/posts/{post_id}")
-async def delete_post(post_id: str):
-    response = table.delete_item(
+async def delete_post_by_id(post_id: str):
+    response = tablr.delete_item(
         Key={
             'post_id': post_id
         }
     )
-    return response
+    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+        return {"message": "Post deleted successfully"}
+    else:
+        return {"error": "Failed to delete post"}
 
 
 @app.get("/signedUrlPut")
