@@ -40,7 +40,7 @@ class Post(BaseModel):
 
 
 my_config = Config(
-    region_name='us-east-2',
+    region_name='us-east-1',
     signature_version='v4',
 )
 
@@ -71,24 +71,31 @@ async def post_a_post(post: Post, authorization: str | None = Header(default=Non
 async def get_all_posts(user: Union[str, None] = None):
 
     if user is None:
-        # Récupérer tous les posts si aucun utilisateur n'est spécifié
         response = table.scan()
     else:
-        # Récupérer les posts pour un utilisateur spécifique
         response = table.query(
-            KeyConditionExpression=Key('username').eq(user)
+            IndexName='username-lastename-index',  
+            KeyConditionExpression='username = :u',
+            ExpressionAttributeValues={
+                ':u': {'S': user}
+            }
         )
 
-    # Extraire les items de la réponse DynamoDB
     items = response.get('Items', [])
-
-    # Retourner la liste des posts
     return items
     
 @app.delete("/posts/{post_id}")
-async def get_post_user_id(post_id: str):
-    # Doit retourner le résultat de la requête la table dynamodb
-    return []
+async def delete_post_by_id(post_id: str):
+    response = tablr.delete_item(
+        Key={
+            'post_id': post_id
+        }
+    )
+    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+        return {"message": "Post deleted successfully"}
+    else:
+        return {"error": "Failed to delete post"}
+
 
 @app.get("/signedUrlPut")
 async def get_signed_url_put(filename: str,filetype: str, postId: str,authorization: str | None = Header(default=None)):
