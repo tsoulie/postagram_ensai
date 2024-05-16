@@ -11,6 +11,9 @@ from cdktf_cdktf_provider_aws.s3_bucket import S3Bucket
 from cdktf_cdktf_provider_aws.s3_bucket_cors_configuration import S3BucketCorsConfiguration, S3BucketCorsConfigurationCorsRule
 from cdktf_cdktf_provider_aws.s3_bucket_notification import S3BucketNotification, S3BucketNotificationLambdaFunction
 from cdktf_cdktf_provider_aws.dynamodb_table import DynamodbTable, DynamodbTableAttribute, DynamodbTableGlobalSecondaryIndex
+from cdktf_cdktf_provider_aws.iam_role import IamRole
+from cdktf_cdktf_provider_aws.iam_role_policy import IamRolePolicy
+import json
 import os
 
 p = os.path.abspath(__file__)
@@ -78,19 +81,20 @@ class ServerlessStack(TerraformStack):
             self, "lambda_permission",
             action="lambda:InvokeFunction",
             statement_id="AllowExecutionFromS3Bucket",
-            function_name=lambda_function.function_name,
+            function_name=lambda_function.arn,
             principal="s3.amazonaws.com",
             source_arn=bucket.arn,
-            source_account=account_id
+            source_account=account_id,
+            depends_on=[lambda_function, bucket]
         )
 
         notification = S3BucketNotification(
             self, "notification",
+             lambda_function=[S3BucketNotificationLambdaFunction(
+             lambda_function_arn=lambda_function.arn,
+             events=["s3:ObjectCreated:*"]
+             )],
             bucket=bucket.id,
-            lambda_function=[S3BucketNotificationLambdaFunction(
-                lambda_function_arn=lambda_function.arn,
-                events=["s3:ObjectCreated:*"]
-            )],
             depends_on=[permission]
         )
 
