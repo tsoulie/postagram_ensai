@@ -13,7 +13,6 @@ dynamodb = boto3.resource('dynamodb')
 table_name = os.getenv("DYNAMODB_TABLE", "user_score")
 table = dynamodb.Table(table_name)
 
-
 def lambda_handler(event, context):
     logger.info("Event: " + json.dumps(event, indent=2))
 
@@ -36,7 +35,8 @@ def lambda_handler(event, context):
 
             table.update_item(
                 Key={
-                    'username': 'example_user'
+                    'username': 'us#' + 'example_user',
+                    'id': 'po#' + key
                 },
                 UpdateExpression="SET labels = :labels, image_key = :image_key",
                 ExpressionAttributeValues={
@@ -47,6 +47,7 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.error(f"Error processing {key} from bucket {bucket}. Error: {str(e)}")
             raise e
+
     return {
         'statusCode': 200,
         'body': json.dumps('Processing complete')

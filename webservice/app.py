@@ -43,7 +43,6 @@ class Post(BaseModel):
 
 my_config = Config(
     region_name='us-east-1',
-    region_name='us-east-1',
     signature_version='v4',
 )
 
@@ -61,11 +60,11 @@ async def post_a_post(post: Post, authorization: Union[str, None] = Header(defau
     logger.info(f"user : {authorization}")
 
     item = {
-        "username": "example_user",
-        "id": f'{uuid.uuid4()}',
-        "lastename": "example_user",
+        "username": "us#" + authorization,
+        "id": "po#" + f'{uuid.uuid4()}',
         "title": post.title,
-        "body": post.body
+        "body": post.body,
+        "image": ""
     }
     table.put_item(Item=item)
 
@@ -74,18 +73,16 @@ async def post_a_post(post: Post, authorization: Union[str, None] = Header(defau
 
 @app.get("/posts")
 async def get_all_posts(user: Union[str, None] = None):
-
     if user is None:
+        # Récupérer tous les posts si aucun utilisateur n'est spécifié
         response = table.scan()
     else:
+        # Récupérer les posts pour un utilisateur spécifique
         response = table.query(
-            IndexName='username-lastename-index',  
-            KeyConditionExpression='username = :u',
-            ExpressionAttributeValues={
-                ':u': {'S': user}
-            }
+            KeyConditionExpression=Key('username').eq("us#" + user)
         )
 
+        # Extraire les items de la réponse DynamoDB
     items = response.get('Items', [])
 
     # Retourner la liste des posts

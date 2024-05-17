@@ -2,22 +2,14 @@
 from constructs import Construct
 from cdktf import App, TerraformStack
 from cdktf_cdktf_provider_aws.provider import AwsProvider
-from cdktf_cdktf_provider_aws.default_vpc import DefaultVpc
-from cdktf_cdktf_provider_aws.default_subnet import DefaultSubnet
-from cdktf_cdktf_provider_aws.lambda_function import LambdaFunction
-from cdktf_cdktf_provider_aws.lambda_permission import LambdaPermission
-from cdktf_cdktf_provider_aws.data_aws_caller_identity import DataAwsCallerIdentity
 from cdktf_cdktf_provider_aws.s3_bucket import S3Bucket
 from cdktf_cdktf_provider_aws.s3_bucket_cors_configuration import S3BucketCorsConfiguration, S3BucketCorsConfigurationCorsRule
 from cdktf_cdktf_provider_aws.s3_bucket_notification import S3BucketNotification, S3BucketNotificationLambdaFunction
 from cdktf_cdktf_provider_aws.dynamodb_table import DynamodbTable, DynamodbTableAttribute, DynamodbTableGlobalSecondaryIndex
-from cdktf_cdktf_provider_aws.iam_role import IamRole
-from cdktf_cdktf_provider_aws.iam_role_policy import IamRolePolicy
-import json
+from cdktf_cdktf_provider_aws.lambda_function import LambdaFunction
+from cdktf_cdktf_provider_aws.lambda_permission import LambdaPermission
+from cdktf_cdktf_provider_aws.data_aws_caller_identity import DataAwsCallerIdentity
 import os
-
-p = os.path.abspath(__file__)
-path = os.path.dirname(p)
 
 class ServerlessStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
@@ -41,28 +33,20 @@ class ServerlessStack(TerraformStack):
             )]
         )
 
-
-
         dynamo_table = DynamodbTable(self, "DynamoDB_table",
                                      name="user_score",
                                      hash_key="username",
+                                     range_key="id",
                                      attribute=[
                                          DynamodbTableAttribute(name="username", type="S"),
-                                         DynamodbTableAttribute(name="lastname", type="S")
+                                         DynamodbTableAttribute(name="id", type="S"),
                                      ],
                                      billing_mode="PROVISIONED",
                                      read_capacity=5,
-                                     write_capacity=5,
-                                     global_secondary_index=[
-                                         DynamodbTableGlobalSecondaryIndex(
-                                             name="lastname-index",
-                                             hash_key="lastname",
-                                             projection_type="ALL",
-                                             read_capacity=5,
-                                             write_capacity=5
-                                         )
-                                     ])
+                                     write_capacity=5
+                                     )
 
+        path = os.path.dirname(os.path.abspath(__file__))
         lambda_function = LambdaFunction(self, "lambda_function",
                                          function_name="detect_lab",
                                          runtime="python3.10",
