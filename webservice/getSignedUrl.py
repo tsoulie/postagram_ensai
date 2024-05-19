@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-bucket = os.getenv("BUCKET")
+bucket = "my-cdtf-test-bucket20240519193117728500000001"
 s3_client = boto3.client("s3", config=boto3.session.Config(signature_version="s3v4"))
 logger = logging.getLogger("uvicorn")
 
