@@ -90,17 +90,17 @@ async def get_all_posts(user: Union[str, None] = None):
     return items
 
 
-@app.delete("/posts/{post_id}")
-async def delete_post_by_id(post_id: str):
-    response = tablr.delete_item(
-        Key={
-            'post_id': post_id
-        }
-    )
-    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
-        return {"message": "Post deleted successfully"}
-    else:
-        return {"error": "Failed to delete post"}
+# @app.delete("/posts/{post_id}")
+# async def delete_post_by_id(post_id: str):
+#     response = tablr.delete_item(
+#         Key={
+#             'post_id': post_id
+#         }
+#     )
+#     if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+#         return {"message": "Post deleted successfully"}
+#     else:
+#         return {"error": "Failed to delete post"}
 
 
 @app.get("/signedUrlPut")
