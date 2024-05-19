@@ -5,20 +5,19 @@ import os
 import uuid
 from pathlib import Path
 from botocore.exceptions import ClientError
+from dotenv import load_dotenv
 
+load_dotenv()
 
-s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
-bucket = "my-cdtf-test-bucket20240519193117728500000001"
+bucket = os.getenv("BUCKET")
+s3_client = boto3.client("s3", config=boto3.session.Config(signature_version="s3v4"))
 logger = logging.getLogger("uvicorn")
-
 
 def getSignedUrl(filename: str, filetype: str, postId: str, user: str):
     if not bucket:
-        logger.error("BUCKET environment variable is not set")
         raise ValueError("BUCKET environment variable is not set")
 
     if not all([filename, filetype, postId, user]):
-        logger.error("Missing required parameters")
         raise ValueError("Missing required parameters")
 
     unique_filename = f'{uuid.uuid4()}{Path(filename).suffix}'
