@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 
 s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
 bucket = os.getenv("BUCKET")
+logger = logging.getLogger("uvicorn")
 
 
 def getSignedUrl(filename: str, filetype: str, postId: str, user: str):
