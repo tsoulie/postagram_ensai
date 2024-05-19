@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 
 
 s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
-bucket = os.getenv("BUCKET")
+bucket = "my-cdtf-test-bucket20240519193117728500000001"
 logger = logging.getLogger("uvicorn")
 
 
