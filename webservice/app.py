@@ -12,7 +12,6 @@ from pydantic import BaseModel
 import uvicorn
 from boto3.dynamodb.conditions import Key
 from fastapi.openapi.docs import get_swagger_ui_html
-
 from getSignedUrl import getSignedUrl
 import uuid
 
@@ -51,6 +50,8 @@ dynamodb = boto3.resource('dynamodb', config=my_config)
 table = dynamodb.Table(os.getenv("DYNAMO_TABLE"))
 s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
 bucket = os.getenv("BUCKET")
+print(table)
+print(bucket)
 
 
 @app.post("/posts")

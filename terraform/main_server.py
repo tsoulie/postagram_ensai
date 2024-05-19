@@ -28,7 +28,7 @@ import base64
 
 bucket = "my-cdtf-test-bucket20240518174611015700000001"
 dynamo_table = "user_score"
-your_repo = "https://github.com/lou2606/azerazerazerazr.git"
+your_repo = "https://github.com/Krrcharles/postagram_ensai.git"
 
 user_data = base64.b64encode(
     f"""#!/bin/bash

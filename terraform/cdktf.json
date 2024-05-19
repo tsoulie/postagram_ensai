@@ -1,6 +1,6 @@
 {
   "language": "python",
-  "app": "pipenv run python main_server.py",
+  "app": "pipenv run python main_serverless.py",
   "projectId": "b2f6e06b-ab66-418c-827a-0cf8e811878a",
   "sendCrashReports": "true",
   "terraformProviders": [

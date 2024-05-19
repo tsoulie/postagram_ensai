@@ -6,10 +6,9 @@ import uuid
 from pathlib import Path
 from botocore.exceptions import ClientError
 
-bucket = "my-cdtf-test-bucket20240517090927692300000001"
 
 s3_client = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
-logger = logging.getLogger("uvicorn")
+bucket = os.getenv("BUCKET")
 
 
 def getSignedUrl(filename: str, filetype: str, postId: str, user: str):
