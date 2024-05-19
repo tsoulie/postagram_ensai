@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 from boto3.dynamodb.conditions import Key
+from fastapi.openapi.docs import get_swagger_ui_html
 
 from getSignedUrl import getSignedUrl
 import uuid
@@ -105,6 +106,10 @@ async def delete_post_by_id(post_id: str):
 @app.get("/signedUrlPut")
 async def get_signed_url_put(filename: str, filetype: str, postId: str, authorization: Union[str, None] = Header(default=None)):
     return getSignedUrl(filename, filetype, postId, authorization)
+
+@app.get("/docs")
+def read_docs():
+    return get_swagger_ui_html(openapi_url="/openapi.json")
 
 
 if __name__ == "__main__":
